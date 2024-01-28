@@ -63,7 +63,7 @@ class IndexController extends Controller
         } catch (\Exception $exception) {
             //dd($exception);
             Session::flash('error', $exception->getMessage());
-            return to_route('chfreeflight.index');
+            return to_route('chfreeflight.create');
         }
 
         // Add the Bid to the User Account
