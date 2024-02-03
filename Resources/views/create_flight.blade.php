@@ -8,9 +8,11 @@
     {{ Session::get('error') }}
   </div>
   @endif
+  <div class="alert alert-info">If a flight fumber or code are not provided, a flight number in the 9000 range, and a code of "FFT" will automatically be generated.</div>
   <form action="{{route('chfreeflight.store')}}" method="POST">
     <div class="row">
       <div class="col-12">
+
         <div class="form-container">
           <h6><i class="fas fa-info-circle"></i>
             &nbsp;@lang('pireps.flightinformations')
@@ -37,21 +39,18 @@
                 {{ Form::label('flight_number', __('pireps.flightident')) }}
                 <div class="input-group input-group-sm mb3">
                   {{ Form::text('flight_number', null, [
-                      'placeholder' => __('flights.flightnumber'),
+                      'placeholder' => "Flight Number (optional)",
                       'class' => 'form-control',
-                      'readonly' => (!empty($pirep) && $pirep->read_only),
                   ]) }}
                   &nbsp;
                   {{ Form::text('route_code', null, [
                       'placeholder' => __('pireps.codeoptional'),
                       'class' => 'form-control',
-                      'readonly' => (!empty($pirep) && $pirep->read_only),
                   ]) }}
                   &nbsp;
                   {{ Form::text('route_leg', null, [
                       'placeholder' => __('pireps.legoptional'),
                       'class' => 'form-control',
-                      'readonly' => (!empty($pirep) && $pirep->read_only),
                   ]) }}
                 </div>
                 <p class="text-danger">{{ $errors->first('flight_number') }}</p>

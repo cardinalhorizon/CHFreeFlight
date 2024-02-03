@@ -3,6 +3,7 @@
 namespace Modules\CHFreeFlight\Http\Controllers\Frontend;
 
 use App\Contracts\Controller;
+use App\Models\Enums\FlightType;
 use App\Models\Enums\PirepFieldSource;
 use App\Models\Flight;
 use App\Repositories\AirlineRepository;
@@ -19,10 +20,11 @@ use Modules\CHFreeFlight\Providers\CHFreeFlightProvider;
  */
 class IndexController extends Controller
 {
-    public function __construct(public AirlineRepository $airlineRepository,
-                                public FlightService $flightService,
-                                public BidService $bidService)
-    {
+    public function __construct(
+        public AirlineRepository $airlineRepository,
+        public FlightService $flightService,
+        public BidService $bidService
+    ) {
     }
 
     /**
@@ -35,7 +37,7 @@ class IndexController extends Controller
     public function create(Request $request)
     {
         return view('chfreeflight::create_flight', [
-            'airline_list'  => $this->airlineRepository->selectBoxList(true)
+            'airline_list' => $this->airlineRepository->selectBoxList(true)
         ]);
     }
 
@@ -50,6 +52,18 @@ class IndexController extends Controller
     {
         $fields = $request->all();
 
+        // If Free Flight Details Missing, Override
+        if ($fields['flight_number'] == "") {
+            $fields['flight_number'] = random_int(9001, 9999);
+        }
+
+        if ($fields['route_code'] == "") {
+            $fields['route_code'] = "FFT";
+        }
+
+        if ($fields['flight_type'] == FlightType::SCHED_PAX) {
+            $fields['flight_type'] = FlightType::ADDTL_PAX;
+        }
         // Add the owner of the flight
         $fields['owner_type'] = CHFreeFlightProvider::class;
         $fields['user_id'] = Auth::user()->id;
