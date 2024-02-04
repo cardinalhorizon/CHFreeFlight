@@ -67,8 +67,8 @@ class IndexController extends Controller
         // Add the owner of the flight
         $fields['owner_type'] = CHFreeFlightProvider::class;
         $fields['user_id'] = Auth::user()->id;
-        $fields['visible'] = false;
-        $fields['active'] = true;
+        $fields['visible'] = 0;
+        $fields['active'] = 1;
         $fields['minutes'] = 0;
         $fields['hours'] = 0;
         // Create the flight
@@ -79,7 +79,8 @@ class IndexController extends Controller
             Session::flash('error', $exception->getMessage());
             return to_route('chfreeflight.create');
         }
-
+        $flight->visible = 0;
+        $flight->save();
         // Add the Bid to the User Account
         $this->bidService->addBid($flight, Auth::user());
 
