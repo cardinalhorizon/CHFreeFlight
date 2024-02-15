@@ -42,6 +42,7 @@ class DeleteFlights extends Listener
         // We're going to only delete flights that don't have a bid, or a pirep that's completed.
 
         foreach ($flights as $flight) {
+
             // if Pirep is in progress, then don't do anything.
             $pirep = Pirep::where(['flight_id' => $flight->id, 'user_id' => $flight->user_id])->first();
             if ($pirep->state == PirepState::IN_PROGRESS) {
@@ -52,7 +53,10 @@ class DeleteFlights extends Listener
             $bids = Bid::where('flight_id', $flight->id)->count();
             if ($bids == 0) {
                 $flight->delete();
+                continue;
             }
+            $flight->visible = false;
+            $flight->save();
         }
     }
 }
