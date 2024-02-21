@@ -6,6 +6,7 @@ use App\Contracts\Controller;
 use App\Models\Enums\FlightType;
 use App\Models\Enums\PirepFieldSource;
 use App\Models\Flight;
+use App\Models\Subfleet;
 use App\Repositories\AirlineRepository;
 use App\Services\BidService;
 use App\Services\FlightService;
@@ -81,6 +82,11 @@ class IndexController extends Controller
         }
         $flight->visible = 0;
         $flight->save();
+
+        $sfs = Subfleet::where(['airline_id' => $fields['airline_id']])->get();
+        foreach ($sfs as $sf) {
+            $flight->subfleets()->attach($sf);
+        }
         // Add the Bid to the User Account
         $this->bidService->addBid($flight, Auth::user());
 
