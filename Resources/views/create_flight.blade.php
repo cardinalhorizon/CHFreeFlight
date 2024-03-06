@@ -10,6 +10,7 @@
   @endif
   <div class="alert alert-info">If a flight fumber or code are not provided, a flight number in the 9000 range, and a code of "FFT" will automatically be generated.</div>
   <form action="{{route('chfreeflight.store')}}" method="POST">
+    @csrf
     <div class="row">
       <div class="col-12">
 
