@@ -72,9 +72,14 @@ class CHFreeFlightProvider extends ServiceProvider
 
         $this->publishes([$sourcePath => $viewPath],'views');
 
-        $this->loadViewsFrom(array_merge(array_map(function ($path) {
-            return $path . '/modules/chfreeflight';
-        }, \Config::get('view.paths')), [$sourcePath]), 'chfreeflight');
+        $this->loadViewsFrom(array_merge(array_filter(array_map(function ($path) {
+            $path = str_replace('default', setting('general.theme'), $path); 
+            // Check if the directory exists before adding it
+            if (file_exists($path.'/modules/chfreeflight') && is_dir($path.'/modules/chfreeflight'))
+                return $path.'/modules/chfreeflight';
+
+            return null;
+        }, \Config::get('view.paths'))), [$sourcePath]), 'chfreeflight');
     }
 
     /**
