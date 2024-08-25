@@ -39,24 +39,38 @@ class DeleteFlights extends Listener
         // Find all the flights
         $flights = Flight::where('owner_type', CHFreeFlightProvider::class)->get();
 
+        Log::debug("found ".$flights->count()." CHFreeFlight flights");
         // We're going to only delete flights that don't have a bid, or a pirep that's completed.
 
         foreach ($flights as $flight) {
-
+            $flight->visible = false;
+            $flight->save();
+            Log::debug("Processing ".$flight->id);
             // if Pirep is in progress, then don't do anything.
             $pirep = Pirep::where(['flight_id' => $flight->id, 'user_id' => $flight->user_id])->first();
-            if ($pirep->state == PirepState::IN_PROGRESS) {
-                continue;
+
+            if ($pirep) {
+                if ($pirep->state == PirepState::IN_PROGRESS) {
+                    continue;
+                } elseif ($pirep->state == PirepState::PENDING ||
+                    $pirep->state == PirepState::ACCEPTED ||
+                    $pirep->state == PirepState::REJECTED)
+                {
+                    Log::debug("Deleted ".$flight->id);
+                    $flight->delete();
+                    continue;
+                }
             }
 
             // Check if there's a bid.
             $bids = Bid::where('flight_id', $flight->id)->count();
             if ($bids == 0) {
+                Log::debug("Deleted ".$flight->id);
                 $flight->delete();
+
                 continue;
             }
-            $flight->visible = false;
-            $flight->save();
+
         }
     }
 }
