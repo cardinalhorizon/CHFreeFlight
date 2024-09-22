@@ -10,7 +10,7 @@
   @endif
   <div class="card">
     <div class="card-body">
-      <div class="alert alert-info">If a flight fumber or code are not provided, a flight number in the 9000 range, and a code of "FFT" will automatically be generated.</div>
+      <div class="alert alert-info">If a flight number or code are not provided, a flight number in the 9000 range, and a code of "FFT" will automatically be generated.</div>
       <form action="{{route('chfreeflight.store')}}" method="POST">
         @csrf
         <div class="row">
